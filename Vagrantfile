@@ -6,8 +6,8 @@ Vagrant.configure("2") do |config|
   config.vm.provider "virtualbox" do |vb, override|
     override.vm.box = "ubuntu/trusty64"
     override.vm.synced_folder ".", "/srv/openstreetmap-website"
-    vb.customize ["modifyvm", :id, "--memory", "1024"]
-    vb.customize ["modifyvm", :id, "--cpus", "2"]
+    vb.customize ["modifyvm", :id, "--memory", "4096"]
+    vb.customize ["modifyvm", :id, "--cpus", "4"]
   end
 
   # use third party image and NFS sharing for lxc
@@ -31,6 +31,9 @@ Vagrant.configure("2") do |config|
   # port forward for webrick on 3000
   config.vm.network :forwarded_port, :guest => 3000, :host => 3000
 
+  config.vm.network "private_network", ip: "192.168.33.32"
+
   # provision using a simple shell script
   config.vm.provision :shell, :path => "script/vagrant/setup/provision.sh"
+  config.vm.provision "load-data", type: "shell", :privileged => false, :path => "script/vagrant/setup/load-data.sh"
 end
